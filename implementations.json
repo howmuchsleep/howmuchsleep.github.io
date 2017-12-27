@@ -16,7 +16,7 @@
 		"syntax": "javascript"
 	},
 	"JavaScript - ES7 - Using async/await": {
-		"code": "function sleep(ms){\n\treturn new Promise((resolve) => {\n\t\tsetTimeout(resolve, ms);\n\t\t});\n}\n\n(async function run(){\n\t// nighty night\n\tawait sleep(<howmuchsleep>);\n\t// good morning\n})();",
+		"code": "function sleep(ms){\n\treturn new Promise((resolve) => {\n\t\tsetTimeout(resolve, ms);\n\t});\n}\n\n(async function run(){\n\t// nighty night\n\tawait sleep(<howmuchsleep>);\n\t// good morning\n})();",
 		"syntax": "javascript"
 	},
 	"C++ 11": {
