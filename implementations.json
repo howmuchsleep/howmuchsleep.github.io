@@ -1,0 +1,52 @@
+{
+	"": {
+		"code": " __                             _    \r\n/\\ \\                          /'_`\\  \r\n\\ \\ \\___     ___   __  __  __/\\_\\/\\`\\\r\n \\ \\  _ `\\  / __`\\/\\ \\/\\ \\/\\ \\/_//'/'\r\n  \\ \\ \\ \\ \\/\\ \\L\\ \\ \\ \\_/ \\_/ \\ /\\_\\ \r\n   \\ \\_\\ \\_\\ \\____/\\ \\___x___/' \\/\\_\\\r\n    \\/_/\\/_/\\/___/  \\/__//__/    \\/_/ ",
+		"syntax": "text"
+	},
+	"JavaScript - ES5": {
+		"code": "// go to sleep\nsetTimeout(function(){\n\t// rise and shine...\n}, <howmuchsleep>)",
+		"syntax": "javascript"
+	},
+	"JavaScript - ES5 - Blocking (or \"When you just give up on life\")": {
+		"code": "function sleep(ms){\n\tvar start = new Date().getTime();\n\twhile((new Date().getTime()) - start < ms){}\n}\nsleep(<howmuchsleep>);",
+		"syntax": "javascript"
+	},
+	"JavaScript - ES6 - Using generators and co": {
+		"code": "const co = require(\"co\");\n\nfunction sleep(ms){\n\treturn new Promise((resolve) => {\n\t\tsetTimeout(resolve, ms);\n\t});\n}\n\nco(function*(){\n\t// going to sleep\n\tyield sleep(<howmuchsleep>);\n\t// awaking like a boss\n});",
+		"syntax": "javascript"
+	},
+	"JavaScript - ES7 - Using async/await": {
+		"code": "function sleep(ms){\n\treturn new Promise((resolve) => {\n\t\tsetTimeout(resolve, ms);\n\t\t});\n}\n\n(async function run(){\n\t// nighty night\n\tawait sleep(<howmuchsleep>);\n\t// good morning\n})();",
+		"syntax": "javascript"
+	},
+	"C++ 11": {
+		"code": "#include <chrono>\n#include <thread>\n\nstd::this_thread::sleep_for(std::chrono::milliseconds(<howmuchsleep>));",
+		"syntax": "c_cpp"
+	},
+	"C - Windows Driver": {
+		"code": "// Helper macros for handling 100ns intervals, taken from OSR Online\n#define INTERVAL_ABSOLUTE(wait) (wait)\n#define INTERVAL_RELATIVE(wait) (-(wait))\n\n#define INTERVAL_NANOSECONDS(nanos) \\\n\t(((signed __int64)(nanos)) / 100L)\n\n#define INTERVAL_MICROSECONDS(micros) \\\n\t(((signed __int64)(micros)) * INTERVAL_NANOSECONDS(1000L))\n\n#define INTERVAL_MILLISECONDS(milli) \\\n\t(((signed __int64)(milli)) * INTERVAL_MICROSECONDS(1000L))\n\nNTSTATUS KernelModeSleep(DWORD sleepIntervalMs)\n{\n\tLARGE_INTEGER sleepInterval = {0};\n\tsleepInterval.QuadPart = INTERVAL_RELATIVE(INTERVAL_MILLISECONDS(sleepIntervalMs));\n\treturn KeDelayExecutionThread(KernelMode, FALSE, &sleepInterval);\n}\n\nKernelModeSleep(<howmuchsleep>);",
+		"syntax": "c_cpp"
+	},
+	"C - Windows Sleep": {
+		"code": "#define WIN32_LEAN_AND_WIN\n#include <windows.h>\n\nSleep(<howmuchsleep>);",
+		"syntax": "c_cpp"
+	},
+	"C - Windows Timer": {
+		"code": "#define WIN32_LEAN_AND_WIN\n#include <windows.h>\n\nvoid SleepWindowsWithTimer(unsigned int timeInMs)\n{\n\tLARGE_INTEGER dueTime = { 0 };\n\tdueTime.QuadPart = timeInMs * (-10000LL);\n\n\tHANDLE timer = CreateWaitableTimer(NULL, TRUE, NULL);\n\tSetWaitableTimer(timer, &dueTime, 0, NULL, NULL, 0);\n\n\tWaitForSingleObject(timer, INFINITE);\n\n\tCloseHandle(timer);\n}\n\nSleepWindowsWithTimer(<howmuchsleep>);",
+		"syntax": "c_cpp"
+	},
+	"C - nanosleep": {
+		"code": "#include <time.h>\n\nvoid sleep_with_nanosleep(unsigned int time_in_ms)\n{\n\tstruct timespec t = { 0 };\n\tt.tv_sec = time_in_ms / 1000;\n\tt.tv_nsec = (time_in_ms % 1000) * 1000000L\n\tnanosleep(&t, NULL);\n}\n\nsleep_with_nanosleep(<howmuchsleep>);",
+		"syntax": "c_cpp"
+	},
+	"C - system sleep": {
+		"code": "#include <stdlib.h>\n\nvoid SleepWithSystem(unsigned int timeInMs)\n{\n\tchar sleepCommandLine[1024] = { '\\0' };\n\n#ifdef WIN32\n\tsprintf(sleepCommandLine, \"timeout /T %d /NOBREAK\", timeInMs / 1000);\n#else\n\tsprintf(sleepCommandLine, \"sleep %.2f\", (float)timeInMs / 1000.0);\n#endif\n\n\tsystem(sleepCommandLine);\n}\n\nSleepWithSystem(<howmuchsleep>);",
+		"syntax": "c_cpp"
+	},
+	"Python": {
+		"code": "import time\n\ntime.sleep(<howmuchsleep>)\n",
+		"multiplier": 0.001,
+		"decimal": 3,
+		"syntax": "python"
+	}
+}

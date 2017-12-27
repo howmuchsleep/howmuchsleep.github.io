@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html>
 
-	<head>		
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-111570390-1"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag() { dataLayer.push(arguments); }
-			gtag('js', new Date());
+			gtag("js", new Date());
 
-			gtag('config', 'UA-111570390-1');
+			gtag("config", "UA-111570390-1");
 		</script>
-
+		<script src="datalist-polyfill/datalist-polyfill.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+		<script src="ace/mode-text.js" type="text/javascript" charset="utf-8"></script>
+		<script src="ace/theme-monokai.js" type="text/javascript" charset="utf-8"></script>
 		<title>How Much Sleep Should I Put in My Code?</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<style>
 			body {
 				background: #608096;
@@ -30,10 +33,8 @@
 
 			.sleepcontainer {
 				text-align: center;
-				height: 144px;
 				position: relative;
-				top: 50%;
-				margin-top: -72px;
+				margin: 72px 0px 64px 0px;
 			}
 
 			.instruction {
@@ -43,7 +44,7 @@
 			.sleeptime {
 				border-radius: 100px;
 				height: 82px;
-				box-shadow: rgba(0,0,0,0.25) 0px 6px 16px;
+				box-shadow: rgba(0, 0, 0, 0.25) 0px 6px 16px;
 				background-color: #FFF9DA;
 				font-weight: bold;
 				color: #608096;
@@ -51,6 +52,62 @@
 				line-height: 82px;
 				display: inline-block;
 				padding: 0px 40px;
+			}
+
+			.editorcontainer {
+				width: 262px;
+				margin: auto;
+				border-radius: 16px;
+				box-shadow: rgba(0, 0, 0, 0.25) 0px 6px 16px;
+			}
+
+			.syntaxlist {}
+
+			.editor {
+				width: 100%;
+				height: 320px;
+				border-radius: 0px 0px 16px 16px;
+			}
+
+			.syntaxinput {
+				border-radius: 16px 16px 0px 0px;
+				padding: 8px 16px;
+				border: none;
+				width: 230px;
+				border-bottom: 1px solid #444;
+				outline: none;
+				background: #272822;
+				color: #dedede;
+				font-family: monospace;
+			}
+
+			.syntaxinput::-webkit-calendar-picker-indicator:hover {
+				background: transparent;
+				cursor: pointer;
+			}
+			@media (min-width:384px) {
+				.editorcontainer {
+					width: 382px;
+				}
+				.syntaxinput {
+					width: 350px;
+				}
+			}
+			@media (min-width:514px) {
+				.editorcontainer {
+					width: 512px;
+				}
+				.syntaxinput {
+					width: 480px;
+				}
+			}
+			@media (min-width:770px) {
+				.editorcontainer {
+					width: 768px;
+				}
+				.syntaxinput {
+					width: 736px;
+				}
 			}
 		</style>
 	</head>
@@ -66,13 +123,99 @@
 					sleep in your code
 				</div>
 			</div>
+			<div class="editorcontainer">
+				<input class="syntaxinput" list="syntaxDatalist" id="syntaxInput" placeholder="Choose your sleepy syntax" />
+				<datalist class="syntaxlist" id="syntaxDatalist"></datalist>
+				<div id="editor" class="editor"></div>
+			</div>
 		</div>
 	</body>
 	<script>
-		window.onload = function () {
-			var sleeptime = parseInt(Math.random() * 10000);
-			document.getElementById("sleeptime").innerText = sleeptime + "ms"
+		// this is written like it's 1998 because it's really important for us to support IE lowe... nvm... 
+		function getImplementations(cb) {
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", "/implementations.json?nocacheyolo=" + (new Date().getTime()));
+			xhr.onreadystatechange = function () {
+				if (4 === xhr.readyState) {
+					var implementations = [];
+					try {
+						var implementations = JSON.parse(xhr.responseText);
+					} catch (e) { }
+					cb(implementations);
+				}
+			};
+			xhr.send();
 		}
+		function loadAllScripts(implementations, cb) {
+			var toLoad = 0;
+			var loaded = 0;
+			for (var name in implementations) {
+				var impl = implementations[name];
+				if (impl.syntax) {
+					var syntaxJsFile = "/ace/mode-" + impl.syntax + ".js";
+					if (document.querySelector("script[src='" + syntaxJsFile + "']")) {
+						continue;
+					}
+					toLoad++;
+					var syntaxScript = document.createElement("script");
+					syntaxScript.type = "text/javascript";
+					syntaxScript.charset = "utf-8"
+					syntaxScript.src = "/ace/mode-" + impl.syntax + ".js";
+					syntaxScript.onload = function () {
+						loaded++;
+						if (loaded === toLoad) {
+							cb();
+						}
+					};
+					document.head.appendChild(syntaxScript);
+				}
+			}
+		}
+		function changeImplementation(sleeptime, editor, implementation) {
+			var modeModule = ace.require("ace/mode/" + implementation.syntax || "text");
+			if (!modeModule) {
+				modeModule = ace.require("ace/mode/text");
+			}
+			var Mode = modeModule.Mode;
+			var printedSleep = (sleeptime * (implementation.multiplier || 1)).toFixed(implementation.decimal || 0);
+			editor.session.setMode(new Mode());
+			editor.session.setValue(implementation.code.replace("<howmuchsleep>", printedSleep));
+		}
+
+		var sleeptime = parseInt(Math.random() * 10000);
+		document.getElementById("sleeptime").innerText = sleeptime + "ms";
+
+		getImplementations(function (implementations) {
+			loadAllScripts(implementations, function () {
+				// prepare editor
+				var editor = ace.edit("editor");
+				editor.setTheme("ace/theme/monokai");
+				editor.setReadOnly(true);
+				editor.setHighlightActiveLine(false);
+				editor.setShowPrintMargin(false);	
+
+				// prepare syntaxt list
+				var syntaxInput = document.getElementById("syntaxInput");
+				var sytaxDatalist = document.getElementById("syntaxDatalist");
+				var firstSyntax;
+				for (var name in implementations) {
+					if (!firstSyntax) {
+						firstSyntax = name;
+					}
+					var option = document.createElement("option");
+					option.innerHTML = name;
+					sytaxDatalist.appendChild(option);
+				}
+
+				// init vaslues
+				changeImplementation(sleeptime, editor, implementations[""]);
+				syntaxInput.addEventListener("input", function (e) {
+					if (implementations[syntaxInput.value]) {
+						changeImplementation(sleeptime, editor, implementations[syntaxInput.value]);
+					}
+				})
+			});
+		});
 	</script>
 
 </html>
