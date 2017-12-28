@@ -34,7 +34,7 @@
 			.sleepcontainer {
 				text-align: center;
 				position: relative;
-				margin: 72px 0px 64px 0px;
+				margin: 40px 0px 40px 0px;
 			}
 
 			.instruction {
@@ -81,10 +81,33 @@
 				font-family: monospace;
 			}
 
+			.github {
+				height: 20px;
+				text-align: center;
+				display: block;
+				margin: 12px 0px;
+				color: #FFF9DA;
+				text-decoration: none;
+				font-size: 12px;
+
+			}
+
+			.github img {
+				height: 100%;
+				vertical-align: middle;
+			}
+
 			.syntaxinput::-webkit-calendar-picker-indicator:hover {
 				background: transparent;
 				cursor: pointer;
 			}
+
+			@media (min-height:688px) {
+				.sleepcontainer {
+					margin: 72px 0px 64px 0px;
+				}
+			}
+
 			@media (min-width:384px) {
 				.editorcontainer {
 					width: 382px;
@@ -93,6 +116,7 @@
 					width: 350px;
 				}
 			}
+
 			@media (min-width:514px) {
 				.editorcontainer {
 					width: 512px;
@@ -101,6 +125,7 @@
 					width: 480px;
 				}
 			}
+
 			@media (min-width:770px) {
 				.editorcontainer {
 					width: 768px;
@@ -128,6 +153,9 @@
 				<datalist class="syntaxlist" id="syntaxDatalist"></datalist>
 				<div id="editor" class="editor"></div>
 			</div>
+			<a class="github" href="https://github.com/howmuchsleep/howmuchsleep.github.io">
+				<img src="./github.png" /> Suggest more languages and syntaxes!
+			</a>
 		</div>
 	</body>
 	<script>
@@ -192,7 +220,7 @@
 				editor.setTheme("ace/theme/monokai");
 				editor.setReadOnly(true);
 				editor.setHighlightActiveLine(false);
-				editor.setShowPrintMargin(false);	
+				editor.setShowPrintMargin(false);
 
 				// prepare syntaxt list
 				var syntaxInput = document.getElementById("syntaxInput");
