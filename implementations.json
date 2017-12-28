@@ -48,5 +48,23 @@
 		"multiplier": 0.001,
 		"decimal": 3,
 		"syntax": "python"
+	},
+	"Golang": {
+		"code": "package main\n\nimport \"time\"\n\nfunc main() {\n\ttime.Sleep(time.Millisecond * <howmuchsleep>)\n}",
+		"syntax": "golang"
+	},
+	"Objective-C": {
+		"code": "int main(int argc, char * argv[]) {\n\t[NSThread sleepForTimeInterval:<howmuchsleep>f];\n}",
+		"syntax": "objectivec",
+		"multiplier": 0.001,
+		"decimal": 3
+	},	
+	"Rust": {
+		"code": "use std::time::Duration;\nuse std::thread;\n\nfn main() {\n\tthread::sleep(Duration::from_millis(<howmuchsleep>))\n}",
+		"syntax": "rust"
+	},
+	"Free Pascal": {
+		"code":"program SleepExample;\nuses Crt;\n\nbegin\n\tDelay(<howmuchsleep>);\nend.",
+		"syntax": "pascal"
 	}
 }
